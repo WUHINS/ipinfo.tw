@@ -22,6 +22,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -47,6 +50,7 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:latest
             ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.date.outputs.tag }}
