@@ -38,6 +38,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Generate date tag
+        id: date
+        run: echo "tag=$(date -u +%Y%m%d)" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -45,9 +49,9 @@ jobs:
           push: true
           tags: |
             ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:latest
-            ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ github.run_number }}
+            ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.date.outputs.tag }}
             ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE }}:latest
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE }}:${{ github.run_number }}
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE }}:${{ steps.date.outputs.tag }}
           build-args: |
             MAXMIND_LICENSE_KEY=${{ secrets.MAXMIND_LICENSE_KEY }}
           cache-from: type=gha
